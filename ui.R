@@ -39,7 +39,7 @@ shinyUI(fluidPage(
         condition="input.tabs=='Rules'",
         h5('Association rules'),
         numericInput("z", "Number of rules to show", 3),
-        numericInput("s", "Rule support", 0.2, min=0, max=1, step=0.1),
+        numericInput("s", "Rule support", 0.8, min=0, max=1, step=0.1),
         numericInput("c", "Confidence", 0.8, min=0, max=1, step=0.1),
         selectInput("target", "Choose the target"," "),
         textInput("target_value", "Choose the target value",""),
