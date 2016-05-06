@@ -4,7 +4,10 @@ library(data.table)
 library(xtable)
 library(arules)
 library(arulesViz)
-library(C50)
+library(rpart)
+library(rattle)
+library(rpart.plot)
+library(RColorBrewer)
 
 shinyServer(function(input,output, session){
   observe({
@@ -55,7 +58,7 @@ shinyServer(function(input,output, session){
   asociacne_ciel<-function(support, confidence){
     mojedata <- as(data_fact, "transactions")
     asociacne <- apriori(mojedata, parameter=list(support=input$s, confidence=input$c, maxlen=4), appearance = list(rhs = c(paste0(input$target,"=",input$target_value)), default="lhs"))
-  }
+      }
   
   values1 <- reactiveValues(shouldShow = FALSE)
   observe({
@@ -70,14 +73,16 @@ shinyServer(function(input,output, session){
   })
   
   output$graf_pravidla<- renderPlot({
-    if (values1$shouldShow) {plot(asociacne_ciel(support, confidence))
+    if (values1$shouldShow) {
+      plot(asociacne_ciel(support, confidence))
                              }
     else {plot(asociacne(support, confidence))}
   })
   
   #VYPISANIE PRAVIDIEL#
   output$pravidla <- renderPrint({
-    if (values1$shouldShow) {inspect(head(sort(asociacne_ciel(support, confidence), by ="lift"),input$z))
+    if (values1$shouldShow) {
+            inspect(head(sort(asociacne_ciel(support, confidence), by ="lift"),input$z))
                             }
       else {inspect(head(sort(asociacne(support, confidence), by ="lift"),input$z))}
   })
@@ -118,14 +123,14 @@ shinyServer(function(input,output, session){
   })
   
   strom_ciel<-function(){
-    strom1 <- C5.0(as.formula(decisionText()), data=data_fact)
-    print(strom1)
-      }
+    tree1 <- rpart(decisionText(), method="class",data=data)
+    }
   
   output$strom<- renderPlot({
     if (decision_values$shouldShow) {
-    strom_ciel()
-    plot(strom1)
+      plot(strom_ciel())
+      text(strom_ciel())
+      fancyRpartPlot(strom_ciel())      
     }
   })
   
